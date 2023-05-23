@@ -35,20 +35,6 @@
 #define 	KPH_OPENDRIVER   KPH_CTL_CODE(200)
 #define 	KPH_QUERYINFORMATIONDRIVER   KPH_CTL_CODE(201)
 
-int
-isProcessRunning(
-	int pid
-)
-{
-	HANDLE phandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
-	if (!phandle)
-		return (-1);
-	CloseHandle(phandle);
-	return (0);
-
-}
-
-
 BOOL SetPrivilege(
 	HANDLE htoken,          // access token handle
 	LPCTSTR lpszPrivilege  // name of privilege to enable/disab   // to enable or disable privilege
@@ -127,7 +113,7 @@ int wmain(
 		NTSTATUS ExitStatus;
 	} input = { ProcessHandle, ExitStatus };
 
-	DWORD lpBytesReturned;
+	PVOID lpBytesReturned;
 
 	HANDLE hdevice = CreateFile(L"\\\\.\\GlobalRoot\\Device\\KProcessHacker2", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
 
@@ -147,6 +133,7 @@ int wmain(
 		return (-1);
 	}
 	printf("process %d has been terminated successfully with status %d.\n", pid, ExitStatus);
+
 	CloseHandle(hdevice);
 	system("pause");
 	return (0);
